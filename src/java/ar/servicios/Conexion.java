@@ -26,8 +26,23 @@ public class Conexion {
   private String codigoReferenciaServicio = "ARHS";
 
   
+  public void connect(){
+    try {  
+      Class.forName("com.mysql.jdbc.Driver");
+      con=DriverManager.getConnection("jdbc:mysql://localhost:3306/DBSTORE","store","store2020_");
+      System.out.println(">> "+codigoReferenciaServicio+" - Conexión exitosa!"); 
+      connectToDB = true;
+    } catch (ClassNotFoundException ex) {
+      System.out.println("Conexión no establecida - clase no econttrda. Excepción es : "+ex);
+      connectToDB = false;
+    } catch (SQLException ex) {
+      System.out.println("Conexión no establecida - Excepción SQL, Excepción es: - "+ex);
+      connectToDB = false;
+    }
+      
+  }
   
-  public void connect(){ 
+  public void connectar(){ 
     try {
       Context ctx = new InitialContext();
       DataSource ds = (DataSource) ctx.lookup(connectionDB);    

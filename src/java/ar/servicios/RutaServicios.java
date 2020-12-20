@@ -86,10 +86,28 @@ public class RutaServicios extends Servicios {
   }
   
   @GET
+  @Path("/brand/add/{data}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response addBrand(@PathParam("data") String data) {
+    Response.ResponseBuilder response = Response.ok(add_brand(data));
+    response.header("Access-Control-Allow-Origin", "*");
+    return response.build();
+  }
+  
+  @GET
   @Path("/categories")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response allCategories() {
     Response.ResponseBuilder response = Response.ok(get_all_categories());
+    response.header("Access-Control-Allow-Origin", "*");
+    return response.build();
+  }
+  
+  @GET
+  @Path("/category/add/{data}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  public Response addCategry(@PathParam("data") String data) {
+    Response.ResponseBuilder response = Response.ok(add_category(data));
     response.header("Access-Control-Allow-Origin", "*");
     return response.build();
   }

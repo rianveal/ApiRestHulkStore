@@ -372,6 +372,52 @@ public class Servicios  {
     return reply;
   }
   
+  public String add_brand(String jsonData){
+    Conexion connection = new Conexion();
+    Statement st = null;
+    ResultSet rs = null;
+    Gson gson = new Gson();
+    String[] dataNO = {"NO"};
+    String reply = gson.toJson(dataNO);
+    String[] replyYES = {"YES"};
+    String brand = "["+jsonData+"]";
+    String name = "", user = "";
+    JsonParser parser = new JsonParser();
+    JsonArray gsonArr = parser.parse(brand).getAsJsonArray();
+    for( JsonElement obj: gsonArr ){
+      JsonObject gsonObj = obj.getAsJsonObject();
+      name = gsonObj.get("name").getAsString();
+      user = gsonObj.get("user").getAsString();
+    }
+    if( validateConnectionDB().equals("YES") ){
+      connection.connect();
+      try {
+        String sentenceGetId = "SELECT \n" +
+                               "    CASE WHEN MAX(ID) IS NULL THEN 1\n" +
+                               "    ELSE MAX(ID) + 1\n" +
+                               "    END ID\n" +
+                               "FROM MARCAS";
+        st = connection.getCon().createStatement();
+        rs = st.executeQuery(sentenceGetId);
+        if( rs.next() ){
+          int unicId = rs.getInt(1);
+          String sentenceAddBrand = "INSERT INTO MARCAS VALUES("+unicId+",'"+name+"','A',SYSDATE(),'"+user+"')";
+          PreparedStatement preparedStmt = connection.getCon().prepareStatement(sentenceAddBrand);
+          preparedStmt.execute();
+          reply = gson.toJson(replyYES);
+        }  
+      } catch (SQLException e) {
+        System.out.println(""+codigoReferenciaServicio+" - UNA EXCEPCIÓN OCURRIÓ AL GUARDAR LA MARCA :"+e);
+        connection.disconnect();
+      }
+      connection.disconnect();
+    }else{
+      String[] dataNCDB = {"NCDB"};
+      reply = gson.toJson(dataNCDB);
+    } 
+    return reply;
+  }
+  
   public String get_all_categories()  {
     Conexion connection = new Conexion();
     Statement st = null;
@@ -406,5 +452,50 @@ public class Servicios  {
     return reply;
   }
   
+  public String add_category(String jsonData){
+    Conexion connection = new Conexion();
+    Statement st = null;
+    ResultSet rs = null;
+    Gson gson = new Gson();
+    String[] dataNO = {"NO"};
+    String reply = gson.toJson(dataNO);
+    String[] replyYES = {"YES"};
+    String category = "["+jsonData+"]";
+    String name = "", user = "";
+    JsonParser parser = new JsonParser();
+    JsonArray gsonArr = parser.parse(category).getAsJsonArray();
+    for( JsonElement obj: gsonArr ){
+      JsonObject gsonObj = obj.getAsJsonObject();
+      name = gsonObj.get("name").getAsString();
+      user = gsonObj.get("user").getAsString();
+    }
+    if( validateConnectionDB().equals("YES") ){
+      connection.connect();
+      try {
+        String sentenceGetId = "SELECT \n" +
+                               "    CASE WHEN MAX(ID) IS NULL THEN 1\n" +
+                               "    ELSE MAX(ID) + 1\n" +
+                               "    END ID\n" +
+                               "FROM CATEGORIAS";
+        st = connection.getCon().createStatement();
+        rs = st.executeQuery(sentenceGetId);
+        if( rs.next() ){
+          int unicId = rs.getInt(1);
+          String sentenceAddCategory = "INSERT INTO CATEGORIAS VALUES("+unicId+",'"+name+"','A',SYSDATE(),'"+user+"')";
+          PreparedStatement preparedStmt = connection.getCon().prepareStatement(sentenceAddCategory);
+          preparedStmt.execute();
+          reply = gson.toJson(replyYES);
+        }  
+      } catch (SQLException e) {
+        System.out.println(""+codigoReferenciaServicio+" - UNA EXCEPCIÓN OCURRIÓ AL GUARDAR LA CATEGORÍA :"+e);
+        connection.disconnect();
+      }
+      connection.disconnect();
+    }else{
+      String[] dataNCDB = {"NCDB"};
+      reply = gson.toJson(dataNCDB);
+    } 
+    return reply;
+  }
   
 }
