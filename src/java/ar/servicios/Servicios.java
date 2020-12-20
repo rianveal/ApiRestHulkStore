@@ -10,12 +10,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.io.UnsupportedEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Base64;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -99,8 +103,8 @@ public class Servicios  {
           JsonObject dataProduct = new JsonObject();
           dataProduct.addProperty("id", rs.getInt(1));
           dataProduct.addProperty("name", rs.getString(2));
-          dataProduct.addProperty("unitValue", rs.getString(3));
-          dataProduct.addProperty("saleValue", rs.getString(4));
+          dataProduct.addProperty("unitValue", desencryptProccess(rs.getString(3)));
+          dataProduct.addProperty("saleValue", desencryptProccess(rs.getString(4)));
           dataProduct.addProperty("balance", rs.getInt(5));
           dataProduct.addProperty("minimumExistence", rs.getInt(6));
           dataProduct.addProperty("maximumExistence", rs.getInt(7));
@@ -145,8 +149,8 @@ public class Servicios  {
       name = gsonObj.get("name").getAsString();
       brandId = gsonObj.get("brandId").getAsString();
       categoryId = gsonObj.get("categoryId").getAsString();
-      unitValue = gsonObj.get("unitValue").getAsString();
-      unitSale  = gsonObj.get("unitSale").getAsString();
+      unitValue = encryptProccess(gsonObj.get("unitValue").getAsString());
+      unitSale  = encryptProccess(gsonObj.get("unitSale").getAsString());
       minimumExistence = gsonObj.get("minimumExistence").getAsString();
       maximumExistence = gsonObj.get("maximumExistence").getAsString();
       balance = gsonObj.get("balance").getAsString();
@@ -205,8 +209,8 @@ public class Servicios  {
           JsonObject dataProduct = new JsonObject();
           dataProduct.addProperty("id", rs.getInt(1));
           dataProduct.addProperty("name", rs.getString(2));
-          dataProduct.addProperty("unitValue", rs.getString(3));
-          dataProduct.addProperty("saleValue", rs.getString(4));
+          dataProduct.addProperty("unitValue", desencryptProccess(rs.getString(3)));
+          dataProduct.addProperty("saleValue", desencryptProccess(rs.getString(4)));
           dataProduct.addProperty("balance", rs.getInt(5));
           dataProduct.addProperty("minimumExistence", rs.getInt(6));
           dataProduct.addProperty("maximumExistence", rs.getInt(7));
@@ -311,8 +315,8 @@ public class Servicios  {
       name = gsonObj.get("name").getAsString();
       brandId = gsonObj.get("brandId").getAsString();
       categoryId = gsonObj.get("categoryId").getAsString();
-      unitValue = gsonObj.get("unitValue").getAsString();
-      unitSale  = gsonObj.get("unitSale").getAsString();
+      unitValue = encryptProccess(gsonObj.get("unitValue").getAsString());
+      unitSale  = encryptProccess(gsonObj.get("unitSale").getAsString());
       minimumExistence = gsonObj.get("minimumExistence").getAsString();
       maximumExistence = gsonObj.get("maximumExistence").getAsString();
       user = gsonObj.get("user").getAsString();
@@ -498,4 +502,33 @@ public class Servicios  {
     return reply;
   }
   
+  public String encryptProccess(String data){
+    String dataEncrypt = null;
+    try {
+      dataEncrypt = encrypt(data);
+    } catch (UnsupportedEncodingException ex) {
+      Logger.getLogger(Servicios.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    return dataEncrypt;
+  }
+  
+  public String desencryptProccess(String data){
+    String dataDesencerypt = null;
+    try {
+      dataDesencerypt = desencrypt(data);
+    } catch (UnsupportedEncodingException ex) {
+      Logger.getLogger(Servicios.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    
+    return dataDesencerypt;
+  }
+  
+  private static String encrypt(String s) throws UnsupportedEncodingException{
+    return Base64.getEncoder().encodeToString(s.getBytes("utf-8"));
+  }
+  
+  private static String desencrypt(String s) throws UnsupportedEncodingException{
+    byte[] decode = Base64.getDecoder().decode(s.getBytes());
+    return new String(decode, "utf-8");
+  }
 }
